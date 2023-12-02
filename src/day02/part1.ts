@@ -4,16 +4,13 @@ import { CubeGame } from "./cube-game";
 
 export function part1(input: string): number {
   const games = input.split('\n');
-  const cubeGames = new Array<CubeGame>();
   let result = 0;
   games.forEach((game) => {
-    cubeGames.push(new CubeGame(game));
+    const cubeGame = new CubeGame(game);
+    if (cubeGame.validGame()) {
+      result += cubeGame.id;
+    }
   });
 
-  cubeGames.forEach((game) => {
-    if (game.validGame()) {
-      result += game.id;
-    }
-  })
   return result;
 }

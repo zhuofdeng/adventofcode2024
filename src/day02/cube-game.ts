@@ -20,7 +20,6 @@ export class CubeGame {
             cubes.forEach((cube) => {
                 const outcome = cube.trimStart().trimEnd().split(' ');
                 let value = 0;
-                // console.log(`outcome ${outcome}`)
                 if (outcome[1] === 'red') {
                     value = parseInt(outcome[0]);
                     if (value > 12) {
