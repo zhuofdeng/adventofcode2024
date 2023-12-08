@@ -19,7 +19,6 @@ export class CardGame {
     private _originalHand = '';
     private _betAmount: number;
     private _typeRank = 0;
-    private _strength = 0;
     constructor(input: string, checkJoker=false) {
         const card = input.split(' ');
         this._betAmount = parseInt(card[1]);
@@ -114,9 +113,6 @@ export class CardGame {
         for (const [key, value] of this._suits) {
             console.log(`key: ${key}: value: ${value}`)
         }
-    }
-    get strength() {
-        return this._strength;
     }
 
     get betAmount() {
