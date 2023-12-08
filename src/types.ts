@@ -13,3 +13,9 @@ export type NumberRange = {
     start: number,
     range: number,
 }
+
+export type LRNode = {
+    node: string,
+    left: string;
+    right: string;
+}
