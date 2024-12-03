@@ -1,16 +1,16 @@
 // Advent of Code - Day 2 - Part One
 
-import { isLevelSafe } from "./utils";
+import { CubeGame } from "./cube-game";
 
 export function part1(input: string): number {
-  const reports = input.split('\n').map((levels) => levels.split(' ').map((v) => parseInt(v)));
-
+  const games = input.split('\n');
   let result = 0;
-  reports.forEach(level => {
-    if (isLevelSafe(level)) {
-      result += 1;
+  games.forEach((game) => {
+    const cubeGame = new CubeGame(game);
+    if (cubeGame.validGame()) {
+      result += cubeGame.id;
     }
   });
-  
+
   return result;
 }
