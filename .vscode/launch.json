@@ -12,6 +12,7 @@
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}/scripts/start.sh",
+            "args": "day01",
             "outFiles": [
                 "${workspaceFolder}/**/*.js"
             ]
