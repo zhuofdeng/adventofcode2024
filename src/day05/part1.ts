@@ -1,35 +1,28 @@
 // Advent of Code - Day 5 - Part One
 
-import { SourceToDestinationMap } from "./source-to-destination-map";
+import { getPagePairs, isValidPair } from "./utils";
+
 
 export function part1(input: string): number {
-  const almanac = input.split('\n\n');
-  // seeds
-  const seeds = almanac[0].split(': ')[1].split(' ').map(v => parseInt(v));
-  
-  const seedToSoilMap = new SourceToDestinationMap(almanac[1]);
-  const soilToFertilizerMap = new SourceToDestinationMap(almanac[2]);
-  const fertilizerToWaterMap = new SourceToDestinationMap(almanac[3]);
-  const waterToLightMap = new SourceToDestinationMap(almanac[4]);
-  const lightToTemperatureMap = new SourceToDestinationMap(almanac[5]);
-  const temperatureToHumidityMap = new SourceToDestinationMap(almanac[6]);
-  const humidityToLocationMap = new SourceToDestinationMap(almanac[7]);
-
-  let result = Infinity;
-  seeds.forEach(seed => {
-    const sts = seedToSoilMap.findMatch(seed);
-    const stf = soilToFertilizerMap.findMatch(sts);
-    const ftw = fertilizerToWaterMap.findMatch(stf);
-    const wtl = waterToLightMap.findMatch(ftw);
-    const ltt = lightToTemperatureMap.findMatch(wtl);
-    const tth = temperatureToHumidityMap.findMatch(ltt);
-    const htl = humidityToLocationMap.findMatch(tth);
-
-    if (result > htl) {
-      result = htl;
+  const [rules, pages] = input.split('\n\n').map((v) => v.split('\n'));
+  let result = 0;
+  pages.forEach((page) => {
+    const pageNumbers = page.split(',').map(v => parseInt(v));
+    const pagePairs = getPagePairs(pageNumbers);
+    let isValid = true;
+    for(let p = 0; p < pagePairs.length; p++) {
+      if (isValid) {
+        isValid = isValidPair(rules, pagePairs[p]);
+      } else {
+        break;
+      }
     }
 
-  });
+    if(isValid) {
+      result += (pageNumbers[Math.floor(pageNumbers.length / 2)]);
+    }
+  })
+
   
   return result;
 }
