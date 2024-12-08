@@ -1,7 +1,7 @@
-export const isValidPair = (rules: string[], pagePair: number[]): boolean => {
-    let isValid = rules.indexOf(`${pagePair[0]}|${pagePair[1]}`) !== -1;
-    return isValid;
-}
+export const isValidPair = (validPairsMap: Map<number, Set<number>>, pair: number[]): boolean => {
+    const [left, right] = pair;
+    return validPairsMap.get(left)?.has(right) ?? false;
+};
 
 export const getPagePairs = (pages: Array<number>): number[][] => {
     const result: number[][] = [];
@@ -13,15 +13,15 @@ export const getPagePairs = (pages: Array<number>): number[][] => {
         }
     }
     return result;
-}
+};
 
-// Memoization to cache results of subproblems
-const memo: Map<string, number[] | null> = new Map();
-
-// Optimized check for valid pairs
-export const isValidPair2 = (validPairsMap: Map<number, Set<number>>, pair: number[]): boolean => {
-    const [left, right] = pair;
-    return validPairsMap.get(left)?.has(right) ?? false;
+export const isValidSequence = (validPairsMap: Map<number, Set<number>>, sequence: number[]): boolean => {
+    for (let i = 0; i < sequence.length - 1; i++) {
+        if (!isValidPair(validPairsMap, [sequence[i], sequence[i + 1]])) {
+            return false;
+        }
+    }
+    return true;
 };
 
 // Optimized function to build valid pairs map
@@ -37,43 +37,28 @@ export const buildValidPairsMap = (rulesSet: Set<string>): Map<number, Set<numbe
     return validPairsMap;
 };
 
-// Backtracking with pruning and memoization
-export const findInvalidOrder = (
+const getValidSequence = (validPairsMap: Map<number, Set<number>>, sequence: number[]): number[] => {
+    if (isValidSequence(validPairsMap, sequence)) {
+        return sequence;
+    }
+    for(let i = 0; i < sequence.length - 1; i++) {
+        const pair = [sequence[i], sequence[i + 1]];
+        if (!isValidPair(validPairsMap, pair)) {
+            const temp = sequence[i];
+            sequence[i] = sequence[i + 1];
+            sequence[i + 1] = temp;
+            break;
+        }
+    }
+    return getValidSequence(validPairsMap, sequence);
+};
+
+export const findInvalidOrderMidpoint = (
     validPairsMap: Map<number, Set<number>>,
-    pages: number[],
-    current: number[] = [],
-    used: Set<number> = new Set()
-): number[] | undefined | null => {
-    const key = current.join(','); // Memoization key
-    if (memo.has(key)) {
-        return memo.get(key); // Return cached result if already computed
-    }
-
-    if (current.length === pages.length) {
-        // Validate pairs in the current order
-        for (let i = 0; i < current.length - 1; i++) {
-            if (isValidPair2(validPairsMap, [current[i], current[i + 1]])) {
-                memo.set(key, null); // Cache invalid result
-                return null;
-            }
-        }
-        memo.set(key, current); // Cache valid result
-        return current;
-    }
-
-    for (let i = 0; i < pages.length; i++) {
-        if (!used.has(pages[i])) {
-            used.add(pages[i]);
-            current.push(pages[i]);
-
-            const invalidOrder = findInvalidOrder(validPairsMap, pages, current, used);
-            if (invalidOrder) return invalidOrder;
-
-            current.pop();
-            used.delete(pages[i]);
-        }
-    }
-
-    memo.set(key, null); // Cache invalid result
-    return null; // No valid order found
+    pages: number[]
+): number => {
+    
+    const validSequence = getValidSequence(validPairsMap, pages);
+    const midpoint = validSequence[Math.floor(validSequence.length / 2)];
+    return midpoint;
 };
